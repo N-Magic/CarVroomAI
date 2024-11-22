@@ -9,8 +9,12 @@ const path = require("path");
 
 app.use(express.static(path.resolve(__dirname, "../client")));
 
+let id = 0;
+
 io.on("connection", (socket) => {
   console.log("user connected");
+  io.emit("id", id);
+  id++;
 });
 
 server.listen(3000, () => {
