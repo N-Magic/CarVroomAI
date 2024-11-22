@@ -13,7 +13,9 @@ io.on("connection", (socket) => {
   console.log("user connected");
 });
 
-io.listen(3000);
+server.listen(3000, () => {
+  console.log("server running on port 3000");
+});
 
 // const { createServer } = require("node:http");
 
