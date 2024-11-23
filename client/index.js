@@ -101,13 +101,30 @@ canvas.onkeyup = function (e) {
 };
 
 CarPic.onload = () => {
-  gameLoop();
+  requestAnimationFrame(gameLoop);
+  // console.log(CarPic.width); - 256
+  // console.log(CarPic.height); - 256
+  // carPositioning();
 };
 
 function gameLoop() {
-  for (let car in cars) {
-    ctx.
+  for (let i = 0; i < cars.length; i++) {
+    car = cars[i];
+    ctx.restore();
+    ctx.translate(car.pos.x, car.pos.y);
+    ctx.rotate(Math.atan(car.accelleration.y / car.accelleration.x));
+    ctx.drawImage(CarPic, -26 - 16, -6 - 35, 85, 85);
   }
 
-  requestAnimationFrame(gameLoop());
+  requestAnimationFrame(gameLoop);
 }
+
+// function carPositioning() {
+//   let carX = 200;
+//   let carY = 0 + 50;
+//   let carAngle = 0;
+//   ctx.restore();
+//   ctx.translate(carX, carY);
+//   ctx.rotate((carAngle * Math.PI) / 180);
+//   ctx.drawImage(CarPic, -26 - 16, -6 - 35, 85, 85);
+// }
