@@ -16,6 +16,7 @@ const gas = 0;
 const steering = 0;
 
 let friction = 0.02;
+let defaultAcceleration = 10;
 
 class vector {
   constructor(x, y) {
@@ -24,21 +25,21 @@ class vector {
   }
 }
 class car {
-  constructor(pos, velocity, accelleration, id) {
+  constructor(pos, angele, velocity, acceleration, gas, steering, id) {
     this.pos = new vector(pos.x, pos.y);
+    this.angle = angle;
     this.velocity = new vector(velocity.x, velocity.y);
-    this.accelleration = new vector(accelleration.x, accelleration.y);
+    this.acceleration = new vector(acceleration.x, acceleration.y);
+    this.gas = gas;
+    this.steering = steering;
     this.id = id;
   }
   update() {
-    if (this.accelleration.x >= 1) {
-      this.accelleration.x = 1;
-    }
-    if (this.accelleration.y >= 1) {
-      this.accelleration.y = 1;
-    }
-    this.velocity.x += this.accelleration.x;
-    this.velocity.y += this.accelleration.y;
+    this.angle += steering * 10;
+    this.acceleration.x = Math.cos(steering) * defaultAcceleration;
+    this.acceleration.y = Math.sin(steering) * defaultAcceleration;
+    this.velocity.x += this.acceleration.x;
+    this.velocity.y += this.acceleration.y;
     this.velocity.x *= 1 - friction;
     this.velocity.y *= 1 - friction;
     this.pos.x += this.velocity.x;
@@ -108,6 +109,8 @@ CarPic.onload = () => {
 };
 
 function gameLoop() {
+  cars[id];
+
   for (let i = 0; i < cars.length; i++) {
     car = cars[i];
     ctx.save();
