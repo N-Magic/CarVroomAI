@@ -110,10 +110,11 @@ CarPic.onload = () => {
 function gameLoop() {
   for (let i = 0; i < cars.length; i++) {
     car = cars[i];
-    ctx.restore();
+    ctx.save();
     ctx.translate(car.pos.x, car.pos.y);
     ctx.rotate(Math.atan(car.accelleration.y / car.accelleration.x));
     ctx.drawImage(CarPic, -26 - 16, -6 - 35, 85, 85);
+    ctx.restore();
   }
 
   requestAnimationFrame(gameLoop);
