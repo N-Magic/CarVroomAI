@@ -16,7 +16,7 @@ let gas = 0;
 let steering = 0;
 
 let friction = 0.1;
-let defaultAcceleration = 2;
+let defaultAcceleration = 1.5;
 
 class vector {
   constructor(x, y) {
@@ -25,7 +25,7 @@ class vector {
   }
 }
 class car {
-  constructor(pos, angle, velocity, acceleration, gas, steering, id) {
+  constructor(pos, angle, velocity, acceleration, gas, steering, id, life) {
     this.pos = new vector(pos.x, pos.y);
     this.angle = angle;
     this.velocity = new vector(velocity.x, velocity.y);
@@ -33,15 +33,22 @@ class car {
     this.gas = gas;
     this.steering = steering;
     this.id = id;
+    this.life = life;
   }
   update() {
     this.angle += steering * 5;
+    if (this.angle >= 360) {
+      this.angle -= 360;
+    } else if (this.angle <= 0) {
+      this.angle += 360;
+    }
     this.acceleration.x =
       Math.cos((this.angle * Math.PI) / 180) * defaultAcceleration * gas;
     this.acceleration.y =
       Math.sin((this.angle * Math.PI) / 180) * defaultAcceleration * gas;
     this.velocity.x += this.acceleration.x;
     this.velocity.y += this.acceleration.y;
+    // let frictionAngle = Math.abs(this.angle);
     this.velocity.x *= 1 - friction;
     this.velocity.y *= 1 - friction;
     this.pos.x += this.velocity.x;
@@ -57,17 +64,18 @@ socket.on("id", (idin) => {
   if ((id = 9999)) {
     id = idin;
     wordsSpot.innerText = id;
-    cars.push(
-      new car(
-        new vector(800, 200),
-        0,
-        new vector(0, 0),
-        new vector(0, 0),
-        0,
-        0,
-        id,
-      ),
+    let myCar = new car(
+      new vector(800, 200),
+      0,
+      new vector(0, 0),
+      new vector(0, 0),
+      0,
+      0,
+      id,
+      true,
     );
+    cars.push(myCar);
+    socket.emit("newCar", myCar);
   }
 });
 
