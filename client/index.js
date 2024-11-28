@@ -12,11 +12,11 @@ const leftKey = 37;
 const upKey = 38;
 const rightKey = 39;
 const downKey = 40;
-const gas = 0;
-const steering = 0;
+let gas = 0;
+let steering = 0;
 
-let friction = 0.02;
-let defaultAcceleration = 10;
+let friction = 0.1;
+let defaultAcceleration = 2;
 
 class vector {
   constructor(x, y) {
@@ -25,7 +25,7 @@ class vector {
   }
 }
 class car {
-  constructor(pos, angele, velocity, acceleration, gas, steering, id) {
+  constructor(pos, angle, velocity, acceleration, gas, steering, id) {
     this.pos = new vector(pos.x, pos.y);
     this.angle = angle;
     this.velocity = new vector(velocity.x, velocity.y);
@@ -35,9 +35,11 @@ class car {
     this.id = id;
   }
   update() {
-    this.angle += steering * 10;
-    this.acceleration.x = Math.cos(steering) * defaultAcceleration;
-    this.acceleration.y = Math.sin(steering) * defaultAcceleration;
+    this.angle += steering * 5;
+    this.acceleration.x =
+      Math.cos((this.angle * Math.PI) / 180) * defaultAcceleration * gas;
+    this.acceleration.y =
+      Math.sin((this.angle * Math.PI) / 180) * defaultAcceleration * gas;
     this.velocity.x += this.acceleration.x;
     this.velocity.y += this.acceleration.y;
     this.velocity.x *= 1 - friction;
@@ -56,12 +58,19 @@ socket.on("id", (idin) => {
     id = idin;
     wordsSpot.innerText = id;
     cars.push(
-      new car(new vector(800, 200), new vector(0, 0), new vector(0, 0), id),
+      new car(
+        new vector(800, 200),
+        0,
+        new vector(0, 0),
+        new vector(0, 0),
+        0,
+        0,
+        id,
+      ),
     );
   }
 });
 
-// The following functions use keys to control the desired inputs, can be forgoed to have ai control the inputs
 canvas.onkeydown = function (e) {
   if (e.keyCode == leftKey) {
     steering = -1;
@@ -75,7 +84,6 @@ canvas.onkeydown = function (e) {
   if (e.keyCode == downKey) {
     gas = -1;
   }
-  // console.log(steering + " " + gas);
 };
 canvas.onkeyup = function (e) {
   if (e.keyCode == leftKey) {
@@ -98,24 +106,25 @@ canvas.onkeyup = function (e) {
       gas = 0;
     }
   }
-  // console.log(steering + " " + gas);
 };
 
 CarPic.onload = () => {
   requestAnimationFrame(gameLoop);
-  // console.log(CarPic.width); - 256
-  // console.log(CarPic.height); - 256
-  // carPositioning();
 };
 
 function gameLoop() {
-  cars[id];
-
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = 0; i < cars.length; i++) {
     car = cars[i];
+
+    if (car.id == id) {
+      car.gas = gas;
+      car.steering = steering;
+    }
+    car.update();
     ctx.save();
     ctx.translate(car.pos.x, car.pos.y);
-    ctx.rotate(Math.atan(car.accelleration.y / car.accelleration.x));
+    ctx.rotate(((car.angle + 90) * Math.PI) / 180);
     ctx.drawImage(CarPic, -26 - 16, -6 - 35, 85, 85);
     ctx.restore();
   }
